@@ -1,13 +1,12 @@
-# fapi - Fa API which means send api
+# fapi - Fa/Fā/发 API which means send api
 
-Send API quickly.
+Call API quickly ♡ by twinsant.
 
 # How to use
 
 ```
 from fapi import API
 
-# https://ifconfig.io/
 api = API('https://ifconfig.io')
-ret = api.get.ip()
+pprint(api.get.all_json()) # See more examples in fapi.py tests.
 ```
