@@ -1,2 +1,4 @@
-loguru==0.7.0
 requests==2.28.2
+
+# Dev
+loguru==0.7.0
