@@ -8,6 +8,7 @@ class Action:
     def __init__(self, api, method, action):
         self.endpoint = api.endpoint
         self.bearer = api.bearer
+        self.basic = api.basic
         self.kwargs = api.kwargs
         self.method = method
         if 'logger' in api.kwargs:
@@ -38,8 +39,15 @@ class Action:
                 "Authorization": f"Bearer {self.bearer}",
                 "Content-Type": "application/json"
             }
+        elif self.basic:
+            headers = {
+                "Authorization": f"Basic {self.basic}",
+                "Content-Type": "application/json"
+            }
         else:
             headers = {}
+
+        self.logger.debug(f'HEADERS: {headers}')
 
         if 'data' in kwargs:
             data = kwargs['data']
@@ -71,9 +79,10 @@ class _API:
             assert 'not implemented'
 
 class API:
-    def __init__(self, endpoint, bearer=None, **kwargs):
+    def __init__(self, endpoint, bearer=None, basic=None, **kwargs):
         self.endpoint = endpoint
         self.bearer = bearer
+        self.basic = basic
         self.kwargs = kwargs
 
     def __getattr__(self, name):
