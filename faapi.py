@@ -3,6 +3,7 @@ from json import JSONDecodeError
 from pprint import pprint
 
 import requests
+from requests.auth import HTTPBasicAuth
 
 class Action:
     def __init__(self, api, method, action):
@@ -39,15 +40,12 @@ class Action:
                 "Authorization": f"Bearer {self.bearer}",
                 "Content-Type": "application/json"
             }
-        elif self.basic:
-            headers = {
-                "Authorization": f"Basic {self.basic}",
-                "Content-Type": "application/json"
-            }
         else:
             headers = {}
 
-        self.logger.debug(f'HEADERS: {headers}')
+        if self.logger:
+            self.logger.debug(f'HEADERS: {headers}')
+            self.logger.debug(self.method)
 
         if 'data' in kwargs:
             data = kwargs['data']
@@ -55,6 +53,12 @@ class Action:
             r = requests.get(url, params=kwargs, headers=headers)
         if self.method == 'post':
             r = requests.post(url, json=data, headers=headers)
+        if self.method == 'post_form':
+            if self.basic:
+                basic = HTTPBasicAuth(*self.basic.split(':'))
+                r = requests.post(url, data=data, headers=headers, auth=basic)
+            else:
+                r = requests.post(url, data=data, headers=headers)
         else:
             assert 'not implemented'
         try:
@@ -73,6 +77,9 @@ class _API:
             action = Action(self.api, self.method, name)
             return action
         elif self.method == 'post':
+            action = Action(self.api, self.method, name)
+            return action
+        elif self.method == 'post_form':
             action = Action(self.api, self.method, name)
             return action
         else:
