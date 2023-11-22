@@ -26,7 +26,7 @@ def test_ifconfig_io(_cfg):
 
 def test_ifconfig_io_ua(_cfg):
     ret = _cfg.api.get.ua()
-    assert ret == 'python-requests/2.31.0\n'
+    assert ret == 'python-requests/2.28.2\n'
 
 def test_ifconfig_io_lang(_cfg):
     ret = _cfg.api.get.lang()

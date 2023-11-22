@@ -75,6 +75,8 @@ class _API:
         self.method = method
         if 'convert_to_dash' in kwargs:
             self.convert_to_dash = kwargs['convert_to_dash']
+        else:
+            self.convert_to_dash = True
 
     def __getattr__(self, name):
         if self.method == 'get':
