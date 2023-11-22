@@ -6,7 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 class Action:
-    def __init__(self, api, method, action):
+    def __init__(self, api, method, action, convert_to_dash=True):
         self.endpoint = api.endpoint
         self.bearer = api.bearer
         self.basic = api.basic
@@ -14,7 +14,7 @@ class Action:
         self.method = method
         if 'logger' in api.kwargs:
             self.logger = api.kwargs['logger']
-        if '_' in action:
+        if '_' in action and convert_to_dash:
             action = action.replace('_', '-')
         self.action = action
 
@@ -53,6 +53,8 @@ class Action:
             r = requests.get(url, params=kwargs, headers=headers)
         if self.method == 'post':
             r = requests.post(url, json=data, headers=headers)
+        if self.method == 'put':
+            r = requests.put(url, json=data, headers=headers)
         if self.method == 'post_form':
             if self.basic:
                 basic = HTTPBasicAuth(*self.basic.split(':'))
@@ -68,19 +70,24 @@ class Action:
         return ret
 
 class _API:
-    def __init__(self, api, method):
+    def __init__(self, api, method, **kwargs):
         self.api = api
         self.method = method
+        if 'convert_to_dash' in kwargs:
+            self.convert_to_dash = kwargs['convert_to_dash']
 
     def __getattr__(self, name):
         if self.method == 'get':
-            action = Action(self.api, self.method, name)
+            action = Action(self.api, self.method, name, convert_to_dash=self.convert_to_dash)
             return action
         elif self.method == 'post':
-            action = Action(self.api, self.method, name)
+            action = Action(self.api, self.method, name, convert_to_dash=self.convert_to_dash)
+            return action
+        elif self.method == 'put':
+            action = Action(self.api, self.method, name, convert_to_dash=self.convert_to_dash)
             return action
         elif self.method == 'post_form':
-            action = Action(self.api, self.method, name)
+            action = Action(self.api, self.method, name, convert_to_dash=self.convert_to_dash)
             return action
         else:
             assert 'not implemented'
@@ -93,7 +100,7 @@ class API:
         self.kwargs = kwargs
 
     def __getattr__(self, name):
-        _api = _API(self, name)
+        _api = _API(self, name, **self.kwargs)
         return _api
 
 if __name__ == '__main__':
