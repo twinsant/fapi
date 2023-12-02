@@ -18,6 +18,11 @@ class Action:
             action = action.replace('_', '-')
         self.action = action
 
+        if 'param' in api.kwargs:
+            self.param = api.kwargs['param']
+        else:
+            self.param = None
+
     def __getattr__(self, name):
         if name in ['logger']:
             return None
@@ -29,6 +34,9 @@ class Action:
         if convert_dash and '-' in self.action:
             self.action = self.action.replace('-', '.')
         url = self.endpoint + '/' + self.action
+        if self.param:
+            url = url + '/' + self.param
+
         if self.logger:
             self.logger.debug(f'URL: {url}')
         # encode additional kwargs
