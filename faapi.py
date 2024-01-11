@@ -33,6 +33,7 @@ class Action:
         # Call parameters here
         underline2dot = kwargs.get('underline2dot', False)
         convert_dash = kwargs.get('convert_dash', False)
+        proxies = kwargs.get('proxies', None)
         if underline2dot and '-' in self.action:
             self.action = self.action.replace('-', '.')
         elif convert_dash and '-' in self.action:
@@ -64,11 +65,11 @@ class Action:
         if 'data' in kwargs:
             data = kwargs['data']
         if self.method == 'get':
-            r = requests.get(url, params=kwargs, headers=headers)
+            r = requests.get(url, params=kwargs, headers=headers, proxies=proxies)
         if self.method == 'post':
-            r = requests.post(url, json=data, headers=headers)
+            r = requests.get(url, params=kwargs, headers=headers, proxies=proxies)
         if self.method == 'put':
-            r = requests.put(url, json=data, headers=headers)
+            r = requests.get(url, params=kwargs, headers=headers, proxies=proxies)
         if self.method == 'post_form':
             if self.basic:
                 basic = HTTPBasicAuth(*self.basic.split(':'))
