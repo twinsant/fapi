@@ -43,3 +43,8 @@ def test_ifconfig_io_all_json(_cfg):
 def test_ifconfig_io_404(_cfg):
     ret = _cfg.api.get.foo()
     assert ret == '404 page not found'
+
+def test_all_json(_cfg):
+    ret = _cfg.api.get.all_json(underline2dot=True)
+    print(ret)
+    assert ret['ifconfig_hostname'] == 'ifconfig.io'

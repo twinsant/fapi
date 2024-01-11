@@ -30,8 +30,12 @@ class Action:
         return self
 
     def __call__(self, *args, **kwargs):
+        # Call parameters here
+        underline2dot = kwargs.get('underline2dot', False)
         convert_dash = kwargs.get('convert_dash', False)
-        if convert_dash and '-' in self.action:
+        if underline2dot and '-' in self.action:
+            self.action = self.action.replace('-', '.')
+        elif convert_dash and '-' in self.action:
             self.action = self.action.replace('-', '.')
         url = self.endpoint + '/' + self.action
         if self.param:
@@ -48,6 +52,8 @@ class Action:
                 "Authorization": f"Bearer {self.bearer}",
                 "Content-Type": "application/json"
             }
+        elif 'headers' in kwargs:
+            headers = kwargs['headers']
         else:
             headers = {}
 
