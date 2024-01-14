@@ -64,12 +64,16 @@ class Action:
 
         if 'data' in kwargs:
             data = kwargs['data']
+        else:
+            data = None
+        if self.logger:
+            self.logger.debug(f'DATA: {data}')
         if self.method == 'get':
-            r = requests.get(url, params=kwargs, headers=headers, proxies=proxies)
+            r = requests.get(url, params=data, headers=headers, proxies=proxies)
         if self.method == 'post':
-            r = requests.get(url, params=kwargs, headers=headers, proxies=proxies)
+            r = requests.post(url, json=data, headers=headers, proxies=proxies)
         if self.method == 'put':
-            r = requests.get(url, params=kwargs, headers=headers, proxies=proxies)
+            r = requests.put(url, params=data, headers=headers, proxies=proxies)
         if self.method == 'post_form':
             if self.basic:
                 basic = HTTPBasicAuth(*self.basic.split(':'))
