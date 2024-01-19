@@ -10,10 +10,13 @@ class Action:
         self.endpoint = api.endpoint
         self.bearer = api.bearer
         self.basic = api.basic
-        self.kwargs = api.kwargs
         self.method = method
+
         if 'logger' in api.kwargs:
             self.logger = api.kwargs['logger']
+            del api.kwargs['logger']
+        self.kwargs = api.kwargs
+
         if '_' in action and convert_to_dash:
             action = action.replace('_', '-')
         self.action = action
@@ -42,11 +45,12 @@ class Action:
         if self.param:
             url = url + '/' + self.param
 
-        if self.logger:
-            self.logger.debug(f'URL: {url}')
-        # encode additional kwargs
+        # NOTE: encode additional kwargs
         if len(kwargs) > 0:
             url += f'?{urllib.parse.urlencode(self.kwargs)}'
+
+        if self.logger:
+            self.logger.debug(f'URL: {url}')
 
         if self.bearer:
             headers = {
