@@ -33,6 +33,9 @@ class Action:
         return self
 
     def __call__(self, *args, **kwargs):
+        '''
+        data=<post or get data>
+        '''
         # Call parameters here
         underline2dot = kwargs.get('underline2dot', False)
         convert_dash = kwargs.get('convert_dash', False)
@@ -118,6 +121,9 @@ class _API:
             assert 'not implemented'
 
 class API:
+    '''
+    param will put {param} in url path
+    '''
     def __init__(self, endpoint, bearer=None, basic=None, **kwargs):
         self.endpoint = endpoint
         self.bearer = bearer

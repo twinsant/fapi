@@ -6,9 +6,17 @@ import re
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from faapi import API
 
+from dotenv import load_dotenv
+from loguru import logger
+
+load_dotenv()
+EXCHANGERATES_KEY=os.getenv('EXCHANGERATES_KEY')
+
 class Ifconfg:
     def __init__(self):
         self.api = API('https://ifconfig.io')
+
+        self.api2 = API('https://api.exchangeratesapi.io/v1/', logger=logger)
 
 @pytest.fixture
 def _cfg():
@@ -48,3 +56,15 @@ def test_all_json(_cfg):
     ret = _cfg.api.get.all_json(underline2dot=True)
     print(ret)
     assert ret['ifconfig_hostname'] == 'ifconfig.io'
+
+def test_exchangerares_key_ng(_cfg):
+    ret = _cfg.api2.get.latest()
+    print(ret)
+    assert ret['error']['code'] == 'missing_access_key'
+
+def test_exchangerares_key_ok(_cfg):
+    data = {
+        'access_key': EXCHANGERATES_KEY
+    }
+    ret = _cfg.api2.get.latest(data=data)
+    assert 'success' in ret and ret['success']
