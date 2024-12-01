@@ -39,7 +39,6 @@ class Action:
         # Call parameters here
         underline2dot = kwargs.get('underline2dot', False)
         convert_dash = kwargs.get('convert_dash', False)
-        proxies = kwargs.get('proxies', None)
         if underline2dot and '-' in self.action:
             self.action = self.action.replace('-', '.')
         elif convert_dash and '-' in self.action:
@@ -64,6 +63,11 @@ class Action:
             headers = kwargs['headers']
         else:
             headers = {}
+
+        if 'proxies' in self.kwargs: 
+            proxies = self.kwargs['proxies']
+        else:
+            proxies = None
 
         if self.logger:
             self.logger.debug(f'HEADERS: {headers}')
@@ -135,6 +139,10 @@ class API:
         return _api
 
 if __name__ == '__main__':
-    api = API('https://ifconfig.io')
+    site = 'https://ifconfig.io'
+    api = API(site)
     pprint(api.get.foo_dash())
     pprint(api.get.all_json(convert_dash=True))
+
+    proxied = API(site, proxies={'https':'socks5h://localhost:1234'})
+    pprint(proxied.get.all_json(convert_dash=True))
