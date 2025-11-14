@@ -96,7 +96,9 @@ class Action:
         try:
             ret = r.json()
         except JSONDecodeError as e:
-            ret = r.text
+            if self.logger:
+                self.logger.warning(f'JSONDecodeError: {e}')
+            ret = r.content
         return ret
 
 class _API:
